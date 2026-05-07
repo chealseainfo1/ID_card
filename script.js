@@ -26,7 +26,7 @@ document.getElementById("cardForm").addEventListener("submit", function(e) {
 
         // Header
         doc.setFontSize(8);
-        doc.text("AFRICAN DEMOCRATIC CONGRESS", 43, 6, { align: "center" });
+        doc.text("NZE ELUGWU UMUEZEKPOKO", 43, 6, { align: "center" });
         doc.text("MEMBERSHIP CARD", 43, 10, { align: "center" });
 
         // Photo
