@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>NZE ELUGWU UMUEZEKPOKO Membership Card Generator</title>
+    <title>ADC Card Generator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>NZE ELUGWU UMUEZEKPOKO Membership Card Generator</h2>
+<h2>NZE ELUGWU UMUEZEKPOKO Membership Card</h2>
 
 <form id="cardForm">
     <input type="text" id="name" placeholder="Full Name" required><br>
@@ -14,17 +14,15 @@
     <input type="text" id="state" placeholder="State" required><br>
     <input type="text" id="lga" placeholder="LGA" required><br>
     <input type="text" id="ward" placeholder="Ward" required><br>
-    
-    <label>Upload Photo:</label><br>
     <input type="file" id="photo" accept="image/*" required><br><br>
-
     <button type="submit">Generate Card</button>
 </form>
 
-<!-- Libraries -->
+<canvas id="cardCanvas" width="340" height="215"></canvas><br><br>
+<button id="downloadBtn">Download PDF</button>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <script src="script.js"></script>
 
 </body>
