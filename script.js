@@ -1,66 +1,89 @@
+const canvas = document.getElementById("cardCanvas");
+const ctx = canvas.getContext("2d");
+
+let latestImage = null;
+
 document.getElementById("cardForm").addEventListener("submit", function(e) {
     e.preventDefault();
-
-    const { jsPDF } = window.jspdf;
 
     const name = document.getElementById("name").value;
     const card = document.getElementById("card").value;
     const state = document.getElementById("state").value;
     const lga = document.getElementById("lga").value;
     const ward = document.getElementById("ward").value;
-    const photoFile = document.getElementById("photo").files[0];
+    const file = document.getElementById("photo").files[0];
 
     const reader = new FileReader();
 
-    reader.onload = function(event) {
-        const imgData = event.target.result;
+    reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
 
-        const doc = new jsPDF({
-            orientation: "landscape",
-            unit: "mm",
-            format: [85.6, 54]
-        });
+            // Background (green theme)
+            ctx.fillStyle = "#0a7d2c";
+            ctx.fillRect(0, 0, 340, 60);
 
-        // Border
-        doc.rect(1, 1, 83.6, 52);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 60, 340, 155);
 
-        // Header
-        doc.setFontSize(8);
-        doc.text("NZE ELUGWU UMUEZEKPOKO", 43, 6, { align: "center" });
-        doc.text("MEMBERSHIP CARD", 43, 10, { align: "center" });
+            // Header text
+            ctx.fillStyle = "white";
+            ctx.font = "bold 12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("AFRICAN DEMOCRATIC CONGRESS", 170, 20);
+            ctx.font = "10px Arial";
+            ctx.fillText("MEMBERSHIP CARD", 170, 40);
 
-        // Photo
-        doc.addImage(imgData, "JPEG", 5, 12, 20, 20);
+            // Photo
+            ctx.drawImage(img, 10, 75, 70, 70);
 
-        // Text details
-        doc.setFontSize(7);
-        doc.text(`Name: ${name}`, 28, 16);
-        doc.text(`Card No: ${card}`, 28, 21);
-        doc.text(`State: ${state}`, 28, 26);
-        doc.text(`LGA: ${lga}`, 28, 31);
-        doc.text(`Ward: ${ward}`, 28, 36);
+            // Text
+            ctx.fillStyle = "black";
+            ctx.textAlign = "left";
+            ctx.font = "10px Arial";
 
-        // Generate QR code (temporary canvas)
-        const qrDiv = document.createElement("div");
-        new QRCode(qrDiv, {
-            text: `${name} | ${card} | ${state}`,
-            width: 80,
-            height: 80
-        });
+            ctx.fillText("Name: " + name, 90, 90);
+            ctx.fillText("Card: " + card, 90, 105);
+            ctx.fillText("State: " + state, 90, 120);
+            ctx.fillText("LGA: " + lga, 90, 135);
+            ctx.fillText("Ward: " + ward, 90, 150);
 
-        setTimeout(() => {
-            const qrImg = qrDiv.querySelector("img").src;
+            // QR
+            const qrDiv = document.createElement("div");
+            new QRCode(qrDiv, {
+                text: `${name}|${card}|${state}`,
+                width: 80,
+                height: 80
+            });
 
-            // Add QR to PDF
-            doc.addImage(qrImg, "PNG", 65, 30, 18, 18);
+            setTimeout(() => {
+                const qrImg = new Image();
+                qrImg.src = qrDiv.querySelector("img").src;
 
-            // Footer
-            doc.text("Scan to verify", 65, 28);
-            doc.text("Chairman      Secretary", 30, 50);
+                qrImg.onload = function() {
+                    ctx.drawImage(qrImg, 250, 100, 70, 70);
+                };
+            }, 300);
 
-            doc.save("membership_card.pdf");
-        }, 500);
+            latestImage = canvas.toDataURL("image/png");
+        };
+
+        img.src = evt.target.result;
     };
 
-    reader.readAsDataURL(photoFile);
+    reader.readAsDataURL(file);
+});
+
+document.getElementById("downloadBtn").addEventListener("click", function() {
+    if (!latestImage) return;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: [85.6, 54]
+    });
+
+    doc.addImage(latestImage, "PNG", 0, 0, 85.6, 54);
+    doc.save("adc_card.pdf");
 });
